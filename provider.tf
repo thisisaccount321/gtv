@@ -27,7 +27,7 @@ terraform {
 }
 
 provider "aws" {
-  region     = "ap-southeast-1"
+  region = "ap-southeast-1"
 }
 
 resource "aws_s3_bucket" "tfstate_backend" {
@@ -48,7 +48,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "tfstate_backend_e
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"  # Options are "AES256" or "aws:kms"
+      sse_algorithm = "AES256" # Options are "AES256" or "aws:kms"
     }
   }
 }

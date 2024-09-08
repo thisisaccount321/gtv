@@ -1,11 +1,11 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name                  = var.vpc_name
-  cidr                  = var.vpc_cidr
+  name = var.vpc_name
+  cidr = var.vpc_cidr
 
-  azs             = ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
-  enable_dns_support = true
+  azs                  = ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
+  enable_dns_support   = true
   enable_dns_hostnames = true
 
 
@@ -29,34 +29,34 @@ module "vpc" {
     "10.1.8.128/26",
     "10.1.8.192/26"
   ]
-  create_database_subnet_group = true
+  create_database_subnet_group       = true
   create_database_subnet_route_table = true
   # NAT Gateway configuration
   enable_nat_gateway = true
-  single_nat_gateway = true 
+  single_nat_gateway = true
 
 
   tags = {
-    Terraform = "true"
+    Terraform   = "true"
     Environment = "dev"
   }
 
   # Additional Tags to Subnets
   public_subnet_tags = {
-    Type = "Public Subnet"
-    Environment = "dev"
-    "kubernetes.io/role/elb" = 1    
-    "kubernetes.io/cluster/${local.eks_cluster_name}" = "shared"        
+    Type                                              = "Public Subnet"
+    Environment                                       = "dev"
+    "kubernetes.io/role/elb"                          = 1
+    "kubernetes.io/cluster/${local.eks_cluster_name}" = "shared"
   }
   private_subnet_tags = {
-    Type = "Private Subnet"
-    Environment = "dev"
-    "kubernetes.io/role/internal-elb" = 1    
-    "kubernetes.io/cluster/${local.eks_cluster_name}" = "shared"    
+    Type                                              = "Private Subnet"
+    Environment                                       = "dev"
+    "kubernetes.io/role/internal-elb"                 = 1
+    "kubernetes.io/cluster/${local.eks_cluster_name}" = "shared"
   }
 
   database_subnet_tags = {
-    Type = "Database Subnet"
+    Type        = "Database Subnet"
     Environment = "dev"
   }
   # Instances launched into the Public subnet should be assigned a public IP address.
@@ -120,10 +120,10 @@ resource "aws_security_group" "vpn_access_server" {
 
 # EC2 Instance
 resource "aws_instance" "vpn_server" {
-  ami             = var.ami_id
-  instance_type   = var.instance_type
-  subnet_id       = module.vpc.public_subnets[0]
-  key_name        = aws_key_pair.dev_keypair.key_name
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = module.vpc.public_subnets[0]
+  key_name               = aws_key_pair.dev_keypair.key_name
   vpc_security_group_ids = [aws_security_group.vpn_access_server.id]
 
   tags = {
@@ -162,7 +162,7 @@ resource "aws_eip" "vpn_server" {
 resource "aws_ssm_parameter" "dev_public_keypair" {
   name        = "vpn_public_key"
   type        = "SecureString"
-  value       = file(var.public_key_path)
+  value       = file("${path.module}/vpn_key.pub")
   description = "Public key for the VPN instance."
 }
 
@@ -190,11 +190,6 @@ variable "ebs_volume_size" {
   type        = number
 }
 
-variable "public_key_path" {
-  description = "The path to the local public key file."
-  default     = "/Users/jessethienle/AWS-TERRAFORM/terraform/vpn_key.pub"
-  type        = string
-}
 
 output "vpn_instance_id" {
   value = aws_instance.vpn_server.id
@@ -211,7 +206,7 @@ output "vpn_ebs_id" {
 # Define Local Values in Terraform
 locals {
   eks_cluster_name = "dev_cluster"
-} 
+}
 
 
 
@@ -231,7 +226,7 @@ resource "aws_route53_record" "wildcard_record" {
   # ttl     = 300
   alias {
     name                   = "internal-af508f7fedbcf4b65902f77a863a6dc1-1616621960.ap-southeast-1.elb.amazonaws.com"
-    zone_id                = "Z1LMS91P8CMLE5"  # Replace with the actual zone ID
+    zone_id                = "Z1LMS91P8CMLE5" # Replace with the actual zone ID
     evaluate_target_health = true
   }
 }

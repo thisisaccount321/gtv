@@ -10,13 +10,13 @@ module "eks" {
 
 
 
-  vpc_id      = module.vpc.vpc_id
+  vpc_id     = module.vpc.vpc_id
   subnet_ids = data.aws_subnets.private.ids
 
   create_node_security_group = false
 
 
-  cluster_endpoint_public_access = var.cluster_endpoint_public_access
+  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
   eks_managed_node_group_defaults = {
@@ -32,15 +32,15 @@ module "eks" {
 
   eks_managed_node_groups = {
     databases_ng = {
-      name = "databases_ng"
-      subnet_id       = [module.vpc.database_subnets[0]]      
+      name      = "databases_ng"
+      subnet_id = [module.vpc.database_subnets[0]]
 
 
-      instance_types  = [var.databases_ng_node_group_instance_types]
-      capacity_type   = "ON_DEMAND"
-      min_size        = var.databases_ng_node_group_capacity_min_size
-      desired_size    = var.databases_ng_node_group_capacity_desired_size
-      max_size        = var.databases_ng_node_group_capacity_max_size
+      instance_types = [var.databases_ng_node_group_instance_types]
+      capacity_type  = "ON_DEMAND"
+      min_size       = var.databases_ng_node_group_capacity_min_size
+      desired_size   = var.databases_ng_node_group_capacity_desired_size
+      max_size       = var.databases_ng_node_group_capacity_max_size
 
       labels = {
         group : "DatabasesGroup"
@@ -61,13 +61,13 @@ module "eks" {
     }
 
     general_ng = {
-      name              = "general_ng"
-      subnet_ids = data.aws_subnets.private.ids
-      instance_types    = ["t3.large"]
-      capacity_type     = "ON_DEMAND"
-      min_size          = 2
-      desired_size      = 3
-      max_size          = 5
+      name           = "general_ng"
+      subnet_ids     = data.aws_subnets.private.ids
+      instance_types = ["t3.large"]
+      capacity_type  = "ON_DEMAND"
+      min_size       = 2
+      desired_size   = 3
+      max_size       = 5
 
     }
 
@@ -76,11 +76,11 @@ module "eks" {
 
   cluster_security_group_additional_rules = {
     ingress_pvt_cluster = {
-      description                = "Access EKS from VPC."
-      protocol                   = "tcp"
-      from_port                  = 443
-      to_port                    = 443
-      type                       = "ingress"
+      description = "Access EKS from VPC."
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
       cidr_blocks = [var.vpc_cidr]
     }
   }
@@ -125,34 +125,34 @@ module "eks_aws_auth" {
 data "aws_subnets" "private" {
   filter {
     name   = "tag:Type"
-    values = ["Private Subnet"] 
+    values = ["Private Subnet"]
   }
 }
 
 data "aws_subnets" "public" {
   filter {
     name   = "tag:Type"
-    values = ["Public Subnet"] 
+    values = ["Public Subnet"]
   }
 }
 
 data "aws_caller_identity" "current" {}
 
 resource "aws_eks_addon" "ebs_eks_addon" {
-  depends_on = [ aws_iam_role_policy_attachment.ebs_csi_iam_role_policy_attach]
-  cluster_name = "dev_cluster"
-  addon_name   = "aws-ebs-csi-driver"
+  depends_on               = [aws_iam_role_policy_attachment.ebs_csi_iam_role_policy_attach]
+  cluster_name             = "dev_cluster"
+  addon_name               = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.ebs_csi_iam_role.arn
 }
 
 # EKS AddOn - EBS CSI Driver Outputs 
 output "ebs_eks_addon_arn" {
   description = "EKS AddOn - EBS CSI Driver ARN"
-  value = aws_eks_addon.ebs_eks_addon.arn
+  value       = aws_eks_addon.ebs_eks_addon.arn
 }
 output "ebs_eks_addon_id" {
-    description = "EKS AddOn - EBS CSI Driver ID"
-  value = aws_eks_addon.ebs_eks_addon.id
+  description = "EKS AddOn - EBS CSI Driver ID"
+  value       = aws_eks_addon.ebs_eks_addon.id
 }
 
 resource "aws_iam_user" "logs_user" {
@@ -168,7 +168,7 @@ output "aws_access_key_id" {
 }
 
 output "aws_secret_access_key" {
-  value = aws_iam_access_key.logs_user_key.secret
+  value     = aws_iam_access_key.logs_user_key.secret
   sensitive = true
 }
 
@@ -180,8 +180,8 @@ resource "aws_iam_policy" "eks_access_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = [
+        Effect = "Allow"
+        Action = [
           "eks:DescribeCluster"
         ]
         Resource = "arn:aws:eks:ap-southeast-1:463470949045:cluster/dev_cluster"
@@ -192,15 +192,14 @@ resource "aws_iam_policy" "eks_access_policy" {
 
 resource "aws_iam_user_policy_attachment" "logs_user_policy_attachment" {
   user       = aws_iam_user.logs_user.name
-  policy_arn  = aws_iam_policy.eks_access_policy.arn
+  policy_arn = aws_iam_policy.eks_access_policy.arn
 }
 
 output "eks_cluster_endpoint" {
-  value = module.eks.cluster_endpoint
+  value       = module.eks.cluster_endpoint
   description = "The endpoint for the EKS cluster."
 }
 
-# MANUALLY INSTALL
 resource "kubernetes_manifest" "log-viewer-clusterrolebind" {
   manifest = yamldecode(file("${path.module}/log-viewer/log-viewer-clusterrolebind.yaml"))
 

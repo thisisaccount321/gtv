@@ -93,7 +93,7 @@ variable "elasticsearch_chart_version" {
 
 
 variable "elasticsearch_set_values" {
-  type        = list(object({
+  type = list(object({
     name  = string
     value = string
   }))
@@ -118,7 +118,7 @@ variable "homepage_chart_version" {
 
 
 variable "homepage_set_values" {
-  type        = list(object({
+  type = list(object({
     name  = string
     value = string
   }))
@@ -155,35 +155,35 @@ variable "cluster_endpoint_private_access" {
 
 
 variable "databases_ng_node_group_instance_types" {
-  type        = string
+  type = string
 }
 
 variable "databases_ng_node_group_capacity_min_size" {
-  type        = string
+  type = string
 }
 
 variable "databases_ng_node_group_capacity_desired_size" {
-  type        = string
+  type = string
 }
 
 variable "databases_ng_node_group_capacity_max_size" {
-  type        = string
+  type = string
 }
 
 variable "general_ng_node_group_instance_types" {
-  type        = string
+  type = string
 }
 
 variable "general_ng_node_group_capacity_min_size" {
-  type        = string
+  type = string
 }
 
 variable "general_ng_node_group_capacity_desired_size" {
-  type        = string
+  type = string
 }
 
 variable "general_ng_node_group_capacity_max_size" {
-  type        = string
+  type = string
 }
 
 variable "vpc_name" {
