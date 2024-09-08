@@ -198,3 +198,17 @@ variable "vpc_cidr" {
   default     = "10.1.0.0/16"
 }
 
+variable "ami_id" {
+  description = "The AMI ID for the EC2 instance."
+  type        = string
+}
+
+variable "instance_type" {
+  description = "The type of EC2 instance."
+  type        = string
+}
+
+variable "ebs_volume_size" {
+  description = "The size of the EBS volume in GB."
+  type        = number
+}

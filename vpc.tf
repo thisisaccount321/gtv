@@ -65,21 +65,6 @@ module "vpc" {
 
 }
 
-output "vpc_id" {
-  value = module.vpc.vpc_id
-}
-
-output "public_subnets" {
-  value = module.vpc.public_subnets
-}
-
-output "private_subnets" {
-  value = module.vpc.private_subnets
-}
-
-output "database_subnets" {
-  value = module.vpc.database_subnets
-}
 
 # EC2
 
@@ -173,35 +158,9 @@ resource "aws_key_pair" "dev_keypair" {
 
 
 
-### Variables
-
-variable "ami_id" {
-  description = "The AMI ID for the EC2 instance."
-  type        = string
-}
-
-variable "instance_type" {
-  description = "The type of EC2 instance."
-  type        = string
-}
-
-variable "ebs_volume_size" {
-  description = "The size of the EBS volume in GB."
-  type        = number
-}
 
 
-output "vpn_instance_id" {
-  value = aws_instance.vpn_server.id
-}
 
-output "vpn_eip" {
-  value = aws_eip.vpn_server.public_ip
-}
-
-output "vpn_ebs_id" {
-  value = aws_ebs_volume.vpn_ebs.id
-}
 
 # Define Local Values in Terraform
 locals {

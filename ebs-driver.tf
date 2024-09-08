@@ -1,6 +1,3 @@
-#data.terraform_remote_state.eks.outputs.aws_iam_openid_connect_provider_arn
-#data.terraform_remote_state.eks.outputs.aws_iam_openid_connect_provider_extract_from_arn
-
 # Resource: Create EBS CSI IAM Policy 
 resource "aws_iam_policy" "ebs_csi_iam_policy" {
   name        = "AmazonEKS_EBS_CSI_Driver_Policy"
@@ -10,9 +7,7 @@ resource "aws_iam_policy" "ebs_csi_iam_policy" {
   policy = data.http.ebs_csi_iam_policy.response_body
 }
 
-output "ebs_csi_iam_policy_arn" {
-  value = aws_iam_policy.ebs_csi_iam_policy.arn
-}
+
 
 # Resource: Create IAM Role and associate the EBS IAM Policy to it
 resource "aws_iam_role" "ebs_csi_iam_role" {
@@ -50,20 +45,9 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_iam_role_policy_attach" {
   role       = aws_iam_role.ebs_csi_iam_role.name
 }
 
-output "ebs_csi_iam_role_arn" {
-  description = "EBS CSI IAM Role ARN"
-  value       = aws_iam_role.ebs_csi_iam_role.arn
-}
 
 
-data "terraform_remote_state" "eks" {
-  backend = "s3"
-  config = {
-    bucket = "gtv-tfstate-backend"
-    key    = "terraform/state"
-    region = "ap-southeast-1"
-  }
-}
+
 
 data "http" "ebs_csi_iam_policy" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json"
