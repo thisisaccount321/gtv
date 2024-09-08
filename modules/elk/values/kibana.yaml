@@ -1,0 +1,12 @@
+ingress:
+  enabled: true
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  annotations:
+  kubernetes.io/ingress.class: external-nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: jesse-ingress.xyz
+      paths:
+        - path: /
+  tls: []

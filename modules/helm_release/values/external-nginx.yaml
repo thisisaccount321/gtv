@@ -1,0 +1,14 @@
+---
+controller:
+  ingressClassResource:
+    name: external-nginx
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-internal: "false"
+  watchIngressWithoutClass: true
+  extraArgs:
+    enable-ssl-passthrough: "true"
+    ingress-class: external-nginx
+
+  config:
+    enable-underscores-in-headers: "true"
